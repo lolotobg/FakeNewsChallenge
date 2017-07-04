@@ -26,6 +26,27 @@ https://catalog.ldc.upenn.edu/ldc99t42
   `cd models/tutorials/rnn/ptb`
   `python ptb_word_lm.py --data_path=$HOME/simple-examples/data/ --model=small`
   
+  or in this repo 
+  
+  `cd rnn/ptb`
+  `python ptb_word_lm.py --data_path=./data/ --model=small`
+  
+  
+There are 3 supported model configurations:
+===========================================
+| config | epochs | train | valid  | test
+
+===========================================
+
+| small  | 13     | 37.99 | 121.39 | 115.91
+
+| medium | 39     | 48.45 |  86.16 |  82.07
+
+| large  | 55     | 37.87 |  82.62 |  78.29
+
+The exact results may vary depending on the random initialization.
+
+  
   There are 3 supported model configurations in the tutorial code: "small", "medium" and "large". The difference between them is in size of the LSTMs and the set of hyperparameters used for training.
   
   
