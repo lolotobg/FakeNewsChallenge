@@ -19,10 +19,7 @@ Credit:
 Please raise questions in the slack group [fakenewschallenge.slack.com](https://fakenewschallenge.slack.com)
 
 ## Getting Started
-The FNC dataset is inlcuded as a submodule and can be FNC Dataset is included as a submodule. You should download the fnc-1 dataset by running the following commands. This places the fnc-1 dataset into the folder fnc-1/
-
-    git submodule init
-    git submodule update
+The FNC dataset is inlcuded into the folder fnc-1/
 
 ## Useful functions
 ### dataset class
