@@ -30,5 +30,5 @@ Credits:
 - Craig Pfeifer
 
 Note:
-- `test_bodies.csv` and `test_stances_unlabeled.csv` were released later (2 weeks before submission date).
-- `competition_test_bodies.csv`, `competition_test_stances.csv` and `competition_test_stances_unlabeled.csv` contain the actual data used in the final evaluation of the contestants' submissions.
+- `test_bodies.csv` and `test_stances_unlabeled.csv` were released 2 weeks before the submission date - the actual articles to be used for evaluating the submissions, but without the labels.
+- `competition_test_bodies.csv`, `competition_test_stances.csv` and `competition_test_stances_unlabeled.csv` contain the actual data used in the final evaluation of the contestants' submissions (same as test_* but with labels).
