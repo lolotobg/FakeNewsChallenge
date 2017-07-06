@@ -104,6 +104,7 @@ if __name__ == "__main__":
         X_test = Xs[fold]
         y_test = ys[fold]
 
+        # Try 50
         clf = GradientBoostingClassifier(n_estimators=200, random_state=14128, verbose=True)
         clf.fit(X_train, y_train)
 
