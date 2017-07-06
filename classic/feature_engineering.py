@@ -41,6 +41,8 @@ def remove_stopwords(l):
     # Removes stopwords from a list of tokens
     return [w for w in l if w not in feature_extraction.text.ENGLISH_STOP_WORDS]
 
+def has_feature(feature_file):
+    return os.path.isfile(feature_file)
 
 def gen_or_load_feats(feat_fn, headlines, bodies, feature_file):
     if not os.path.isfile(feature_file):
