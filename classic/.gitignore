@@ -1,6 +1,7 @@
 *.tag*
 splits/*.txt
 features/*.npy
+features/*.p
 *.pyc
 .DS_Store
 .idea

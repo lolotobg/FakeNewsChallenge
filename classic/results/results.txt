@@ -1,0 +1,82 @@
+With all unmodieifed features from baseline.
+10-fold cross-validaiton over train with GradientBoostingClassifier n_estimators=50
+
+NULL over train: 0.680440
+Baseline with 200 estimators 10-fold: 79.73509
+Baseline with 50 estimators 10-fold:  79.25029 (no difference with scaling, scaling+PCA reduces score to 78.4735)
+Baseline with 200 estimators over TEST: 75.27947 (75.27303 with scaling)
+Baseline with 50 estimators over TEST:  75.103529 (no difference with scaling)
+
+
+QDA - bad, collinear vars
+
+RidgeClassifier - around 71%
+
+MultinomialNB - 0.757796 without scaling and 0.506743 with scaling
+
+GausiannNB - around 68% both with or without scaling
+
+Best kNN - scaled input, distance weight, k=21, 78.3194
+
+Best SVC - scaled input
+  SVC(random_state=14128, kernel='linear')
+    78.5461, (class_weight='balanced' lowers it to 72.7046)
+  LinearSVC(random_state=14128, class_weight='balanced')
+    78.88609543056802
+
+Best RandomForestClassifier - scaled input, 110 estimators, 79.91877
+
+Best MLPClassifier - nonscaled input, hidden_layer_sizes=(75,25)), 79.648496 (with scaling - 0.7949890080791923)
+
+Best AdaBoostClassifier - scaled input, 75 estimators, 78.78378982046039
+
+MLPClassifier(random_state=14128)
+  Average score 0.795060351697981
+MLPClassifier(random_state=14128, solver='sgd', learning_rate='adaptive')
+  Average score 0.7824663744374796
+MLPClassifier(random_state=14128, solver='sgd', learning_rate='adaptive', tol=5e-5)
+  Average score 0.7831633413575989
+MLPClassifier(random_state=14128, tol=5e-5) // def = 1e-4
+  Average score 0.795060351697981
+MLPClassifier(random_state=14128, activation='logistic') // def = relu
+  Average score 0.7946939797031105
+MLPClassifier(random_state=14128, hidden_layer_sizes=(200,)) // def = (100,)
+  Average score 0.7934976776829883
+MLPClassifier(random_state=14128, hidden_layer_sizes=(50,))
+  Average score 0.7948174129610285
+MLPClassifier(random_state=14128, hidden_layer_sizes=(60,12))
+  Average score 0.7915368832603583
+MLPClassifier(random_state=14128, hidden_layer_sizes=(75,25))
+  Average score 0.7964849665669911
+MLPClassifier(random_state=14128, hidden_layer_sizes=(100,50,20))
+  Average score 0.7910052310677127
+MLPClassifier(random_state=14128, hidden_layer_sizes=(25,75))
+  Average score 0.7955381056609554
+MLPClassifier(random_state=14128, hidden_layer_sizes=(30,90,20))
+  Average score 0.7918493385863714
+MLPClassifier(random_state=14128, hidden_layer_sizes=(80,35,15))
+  Average score 0.7931546028127742
+
+RandomForestClassifier(n_estimators=estimators, random_state=14128)
+scaled
+  Average score with 10 estimators: 0.7828793620913523
+  Average score with 20 estimators: 0.792075680537015
+  Average score with 30 estimators: 0.7954391547534532
+  Average score with 40 estimators: 0.7972496523706012
+  Average score with 50 estimators: 0.7988596383696057
+  Average score with 60 estimators: 0.7976552833841791
+  Average score with 70 estimators: 0.797866981051201
+  Average score with 75 estimators: 0.7981235021630386
+  Average score with 80 estimators: 0.7979052931423245
+  Average score with 90 estimators: 0.798853324238193
+  Average score with 100 estimators: 0.7986176872821832
+    Average score with 110 estimators: 0.7991877469231381
+  Average score with 120 estimators: 0.7983724633878695
+  Average score with 130 estimators: 0.7978095195115975
+  Average score with 140 estimators: 0.797417381030468
+  Average score with 150 estimators: 0.7982245320377968
+  Average score with 200 estimators: 0.7980468750136909
+  Average score with 250 estimators: 0.7980287546075819
+  Average score with 300 estimators: 0.7986323145276364
+  Average score with 400 estimators: 0.7981873516080266
+  Average score with 500 estimators: 0.7981286552601328

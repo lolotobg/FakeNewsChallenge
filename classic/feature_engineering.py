@@ -4,7 +4,7 @@ import nltk
 import numpy as np
 from sklearn import feature_extraction
 from tqdm import tqdm
-
+import math
 
 _wnl = nltk.WordNetLemmatizer()
 
@@ -14,15 +14,21 @@ _refuting_words = [
     'hoax',
     'false',
     'deny', 'denies',
-    # 'refute',
-    'not',
+    'lie', 'lies',
+    'refute',#
+    #'not',
     'despite',
     'nope',
     'doubt', 'doubts',
     'bogus',
     'debunk',
-    'pranks',
-    'retract'
+    'prank', 'pranks',
+    'joke',
+    'deceptive', 'deceive', 'deception',
+    'retract',
+    'untrue',
+    'myth',
+    'bust'
 ]
 _refuting_words_set = set(_refuting_words)
 
@@ -55,8 +61,12 @@ def word_overlap_features(clean_lemmatized_headlines, clean_lemmatized_bodies):
     X = []
     for i, (headline, body) in tqdm(enumerate(zip(clean_lemmatized_headlines, clean_lemmatized_bodies))):
         headline_set = set(headline)
-        features = [
-            len(headline_set.intersection(body)) / float(len(headline_set.union(body)))]
+        common_lemmas_count = len(headline_set.intersection(body))
+        body_lemmas_count = len(frozenset(body))
+        header_coeff = float(common_lemmas_count) / (len(headline_set))
+        #  * math.log(body_lemmas_count, 2)
+        features = [header_coeff]
+        # features = [common_lemmas_count / float(len(headline_set.union(body)))]
         X.append(features)
     return X
 
@@ -66,7 +76,8 @@ def refuting_features(clean_lemmatized_headlines, _):
     X = []
     for headline_lemmas in tqdm(clean_lemmatized_headlines):
         headline_set = set(headline_lemmas)
-        features = [1 if word in headline_set else 0 for word in _refuting_words]
+        features = [len(_refuting_words_set.intersection(headline_set))]
+        # features = [1 if word in headline_set else 0 for word in _refuting_words]
         X.append(features)
     return X
 
@@ -117,12 +128,17 @@ def append_chargrams(features, headline_no_stops, clean_body, clean_body_100, cl
     return features
 
 
-def append_ngrams(features, headline_tokens, clean_body, _clean_body_100, clean_body_255, size):
+def append_ngrams(features, headline_tokens, clean_body, clean_body_100, clean_body_255, size):
     grams = [' '.join(x) for x in ngrams(headline_tokens, size)]
     grams_hits = 0
     grams_early_hits = 0
+    grams_first_hits = 0
     for gram in grams:
-        if gram in clean_body_255:
+        if gram in clean_body_100:
+            grams_hits += 1
+            grams_early_hits += 1
+            grams_first_hits += 1
+        elif gram in clean_body_255:
             grams_hits += 1
             grams_early_hits += 1
         elif gram in clean_body:
@@ -130,6 +146,7 @@ def append_ngrams(features, headline_tokens, clean_body, _clean_body_100, clean_
 
     features.append(grams_hits)
     features.append(grams_early_hits)
+    features.append(grams_first_hits)
     return features
 
 
@@ -148,16 +165,18 @@ def hand_features(clean_headlines, clean_bodies):
                 bin_count += 1
         return [bin_count, bin_count_early]
 
-    def binary_co_occurence_stops(headline_tokens, clean_body, _clean_body_100, _clean_body_255):
+    def binary_co_occurence_stops(headline_tokens, clean_body, _clean_body_100, clean_body_255):
         # Count how many times a token in the title
         # appears in the body text. Stopwords in the title
         # are ignored.
         bin_count = 0
         bin_count_early = 0
         for headline_token in remove_stopwords(headline_tokens):
-            if headline_token in clean_body:
+            if headline_token in clean_body_255:
                 bin_count += 1
-                bin_count_early += 1 # Haha, bin_count_early == bin_count
+                bin_count_early += 1
+            elif headline_token in clean_body:
+                bin_count += 1
         return [bin_count, bin_count_early]
 
     def count_grams(headline_tokens, clean_body, clean_body_100, clean_body_255):
@@ -167,8 +186,9 @@ def hand_features(clean_headlines, clean_bodies):
         headline_no_stops = " ".join(remove_stopwords(headline_tokens))
         features = []
         features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 2)
-        features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 8)
         features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 4)
+        features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 8)
+        #features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 12) # mine
         features = append_chargrams(features, headline_no_stops, clean_body, clean_body_100, clean_body_255, 16)
         features = append_ngrams(features, headline_tokens, clean_body, clean_body_100, clean_body_255, 2)
         features = append_ngrams(features, headline_tokens, clean_body, clean_body_100, clean_body_255, 3)

@@ -1,79 +1,60 @@
-https://github.com/FakeNewsChallenge/fnc-1-baseline
+# Our solution
+Based on the Baseline FNC implementation https://github.com/FakeNewsChallenge/fnc-1-baseline
 
-# Baseline FNC implementation
+Features are similar
+Classification pipeline is heavily modified
 
-Information about the fake news challenge can be found on [FakeChallenge.org](http://fakenewschallenge.org).
+## 2-stage over TEST
 
-This repository contains code that reads the dataset, extracts some simple features, trains a cross-validated model and
-performs an evaluation on a hold-out set of data.
+First stage results
+-------------------------------------
+|           |  related  | unrelated |
+-------------------------------------
+|  related  |   6382    |    682    |
+-------------------------------------
+| unrelated |    379    |   17970   |
+-------------------------------------
+Score: 6088.0 out of 6353.25    (95.82497147129422%)
 
-Credit:
-* Byron Galbraith (Github: @bgalbraith, Slack: @byron)
-* Humza Iqbal (GitHub: @humzaiqbal, Slack: @humza)
-* HJ van Veen (GitHub/Slack: @mlwave)
-* Delip Rao (GitHub: @delip, Slack: @dr)
-* James Thorne (GitHub/Slack: @j6mes)
-* Yuxi Pan (GitHub: @yuxip, Slack: @yuxipan)
+Both stages results
+-------------------------------------------------------------
+|           |   agree   | disagree  |  discuss  | unrelated |
+-------------------------------------------------------------
+|   agree   |    109    |     0     |   1637    |    157    |
+-------------------------------------------------------------
+| disagree  |    16     |     0     |    529    |    152    |
+-------------------------------------------------------------
+|  discuss  |    89     |     0     |   4002    |    373    |
+-------------------------------------------------------------
+| unrelated |     1     |     0     |    378    |   17970   |
+-------------------------------------------------------------
+Score: 9171.25 out of 11651.25  (78.71473017916533%)
 
-## Questions / Issues
-Please raise questions in the slack group [fakenewschallenge.slack.com](https://fakenewschallenge.slack.com)
+## 1-stage over TEST
 
-## Getting Started
-The FNC dataset is inlcuded into the folder fnc-1/
+-------------------------------------------------------------
+|           |   agree   | disagree  |  discuss  | unrelated |
+-------------------------------------------------------------
+|   agree   |    98     |     2     |   1590    |    213    |
+-------------------------------------------------------------
+| disagree  |    14     |     1     |    488    |    194    |
+-------------------------------------------------------------
+|  discuss  |    116    |     2     |   3838    |    508    |
+-------------------------------------------------------------
+| unrelated |     2     |     0     |    243    |   18104   |
+-------------------------------------------------------------
+Score: 9016.0 out of 11651.25   (77.3822551228409%)
 
-## Useful functions
-### dataset class
-The dataset class reads the FNC-1 dataset and loads the stances and article bodies into two separate containers.
+## 1-stage over train (10-fold cross-validation)
 
-    dataset = DataSet()
-
-You can access these through the ``.stances`` and ``.articles`` variables
-
-    print("Total stances: " + str(len(dataset.stances)))
-    print("Total article bodies: " + str(len(dataset.articles)))
-
-* ``.articles`` is a dictionary of articles, indexed by the body id. For example, the text from the 144th article can be printed with the following command:
-   ``print(dataset.articles[144])``
-
-### Hold-out set split
-Data is split using the ``generate_hold_out_split()`` function. This function ensures that the article bodies between the training set are not present in the hold-out set. This accepts the following arguments. The body IDs are written to disk.
-
-* ``dataset`` - a dataset class that contains the articles and bodies
-* ``training=0.8`` - the percentage of data used for the training set (``1-training`` is used for the hold-out set)
-* ``base_dir="splits/"``- the directory in which the ids are to be written to disk
-
-
-### k-fold split
-The training set is split into ``k`` folds using the ``kfold_split`` function. This reads the training split from the disk and generates it if the split is not present.
-
-* ``dataset`` - dataset reader
-* ``n_folds = 10`` - number of folds
-* ``base_dir="splits"`` - directory to read dataset splits from or write to
-
-This returns an array of arrays that contain the ids for stances for each fold.
-
-### Getting headline/stance from IDs
-The ``get_stances_for_folds`` function returns the stances from the original dataset. See ``fnc_kfold.py`` for example usage.
-
-
-
-## Scoring Your Classifier
-
-The ``report_score`` function in ``utils/score.py`` is based off the original scorer provided in the FNC-1 dataset repository written by @bgalbraith.
-
-``report_score`` expects 2 parameters. A list of actual stances (i.e. from the dev dataset), and a list of predicted stances (i.e. what you classifier predicts on the dev dataset). In addition to computing the score, it will also print the score as a percentage of the max score given any set of gold-standard data (such as from a  fold or from the hold-out set).
-
-    predicted = ['unrelated','discuss',...]
-    actual = [stance['Stance'] for stance in holdout_stances]
-
-    report_score(actual, predicted)
-
-This will print a confusion matrix and a final score your classifier. We provide the scores for a classifier with a simple set of features which you should be able to match and eventually beat!
-
-|               | agree         | disagree      | discuss       | unrelated     |
-|-----------    |-------        |----------     |---------      |-----------    |
-|   agree       |    118        |     3         |    556        |    85         |
-| disagree      |    14         |     3         |    130        |    15         |
-|  discuss      |    58         |     5         |   1527        |    210        |
-| unrelated     |     5         |     1         |    98         |   6794        |
-Score: 3538.0 out of 4448.5	(79.53%)
+Score for fold 8 = 0.8046619554899272
+Score for fold 5 = 0.7986692669496387
+Score for fold 0 = 0.8156965600726319
+Score for fold 4 = 0.8055000587613116
+Score for fold 6 = 0.8125525651808242
+Score for fold 2 = 0.8409216183441738
+Score for fold 7 = 0.8182117028270874
+Score for fold 9 = 0.8078912546613738
+Score for fold 3 = 0.8063854047890536
+Score for fold 1 = 0.8238887003732609
+Average score 0.8134379087449283
